@@ -3,8 +3,7 @@ pipeline {
         stages {  
        	    stage("git_checkout") {  
            	    steps {  
-              	    echo "cloning repository" 
-              	    echo "repo cloned successfully"  
+                    git credentialsId: 'github', url: 'https://github.com/Sakshu7/Online_Book_Store.git'
               	    }  
          	    } 
         }
