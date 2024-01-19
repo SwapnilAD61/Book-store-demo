@@ -1,12 +1,12 @@
 pipeline {  
     agent any  
         stages {  
-       	    stage("git_checkout") {  
+       	    stage('pullcheckout') {  
            	    steps {  
                     git credentialsId: 'github', url: 'https://github.com/Sakshu7/Online_Book_Store.git'
               	    }  
          	    } 
-            stage("Build") {  
+            stage('build') {  
            	    steps {
                     sh "mvn clean package"
               	    } 
