@@ -1,0 +1,71 @@
+stages:
+  - build
+  - test
+
+include:
+   - template: Security/SAST.gitlab-ci.yml
+   - template: Code-Quality.gitlab-ci.yml
+   - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+   - template: Jobs/Secret-Detection.gitlab-ci.yml
+  #  - template: DAST.gitlab-ci.yml
+
+build-code:
+  stage: build
+  tags:
+    - shell-s
+  script:
+    - echo "==== Project Building Started ====="
+    - mvn clean install
+    - echo "code build Successfull..."
+    - ls
+  artifacts:
+    paths:
+      - target/*.war
+
+code_quality:
+  stage: test
+  tags:
+    - doc-s
+  artifacts:
+    paths:
+      - gl-code-quality-report.json
+    reports:
+      codequality: gl-code-quality-report.json
+  when: always
+
+gemnasium-maven-dependency_scanning:
+  extends:
+    - .ds-analyzer
+    - .cyclonedx-reports
+  variables:
+    DS_ANALYZER_NAME: "gemnasium-maven"
+  stage: test
+  tags:
+    - doc-test
+  artifacts:
+    paths:
+     - gl-sbom-*.cdx.json
+     - gl-dependency-scanning-report.json
+    expire_in: never
+ 
+sast:
+  stage: test
+  tags:
+    - doc-test
+  artifacts:
+    name: sast
+    paths:
+      - gl-sast-report.json
+    reports:
+      sast: gl-sast-report.json
+ 
+secret_detection:
+  stage: test
+  tags:
+    - doc-test
+  variables:
+    SECRET_DETECTION_HISTORIC_SCAN: "true"
+  artifacts:
+    paths:
+      - gl-secret_detection-report.json
+
