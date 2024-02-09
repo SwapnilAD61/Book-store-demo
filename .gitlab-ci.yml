@@ -83,7 +83,7 @@ package-artifact:
     - shell-ci-auto
   script:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_NAME}/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/my_package/0.0.1/*.war"'
-  needs: build-code
+  needs: [build-code]
 
 
 webapp-release:
