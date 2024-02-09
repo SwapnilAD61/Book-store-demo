@@ -1,6 +1,7 @@
 stages:
-  - build
   - test
+  - build
+
 
 include:
    - template: Security/SAST.gitlab-ci.yml
@@ -9,23 +10,12 @@ include:
    - template: Jobs/Secret-Detection.gitlab-ci.yml
   #  - template: DAST.gitlab-ci.yml
 
-build-code:
-  stage: build
-  tags:
-    - shell-s
-  script:
-    - echo "==== Project Building Started ====="
-    - mvn clean install
-    - echo "code build Successfull..."
-    - ls
-  artifacts:
-    paths:
-      - target/*.war
 
+## Testing Stage ##
 code_quality:
   stage: test
   tags:
-    - doc-s
+    - docker-ci-auto_cq
   artifacts:
     paths:
       - gl-code-quality-report.json
@@ -41,7 +31,7 @@ gemnasium-maven-dependency_scanning:
     DS_ANALYZER_NAME: "gemnasium-maven"
   stage: test
   tags:
-    - doc-test
+    - docker-ci-auto
   artifacts:
     paths:
      - gl-sbom-*.cdx.json
@@ -51,7 +41,7 @@ gemnasium-maven-dependency_scanning:
 sast:
   stage: test
   tags:
-    - doc-test
+    - docker-ci-auto
   artifacts:
     name: sast
     paths:
@@ -62,10 +52,26 @@ sast:
 secret_detection:
   stage: test
   tags:
-    - doc-test
+    - docker-ci-auto
   variables:
     SECRET_DETECTION_HISTORIC_SCAN: "true"
   artifacts:
     paths:
       - gl-secret_detection-report.json
+
+
+
+## Build Stage ##
+build-code:
+  stage: build
+  tags:
+    - shell-ci-auto
+  script:
+    - echo "==== Project Building Started ====="
+    - mvn clean install
+    - echo "code build Successfull..."
+    - ls
+  artifacts:
+    paths:
+      - target/*.war
 
