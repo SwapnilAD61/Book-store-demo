@@ -49,7 +49,7 @@ sast:
     reports:
       sast: gl-sast-report.json
  
-.secret_detection:
+secret_detection:
   stage: test
   tags:
     - docker-ci-auto
@@ -58,10 +58,6 @@ sast:
   artifacts:
     paths:
       - gl-secret_detection-report.json
-
-security-scans:
-  extends:
-    - .secret_detection
 
 
 
