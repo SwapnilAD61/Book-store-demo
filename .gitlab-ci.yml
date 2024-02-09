@@ -112,7 +112,7 @@ deploy-dev:
     - build-code
   when: manual
 
-  deploy-stage:
+deploy-stage:
   stage: deploy
   tags:
     - shell-ci-auto
@@ -130,7 +130,7 @@ deploy-dev:
   when: manual
 
 
-  deploy-production:
+deploy-production:
   stage: deploy
   tags:
     - shell-ci-auto
