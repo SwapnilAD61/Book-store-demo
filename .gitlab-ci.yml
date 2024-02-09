@@ -15,7 +15,7 @@ include:
 code_quality:
   stage: test
   tags:
-    - docker-ci-auto_cq
+    - docker-ci-auto-cq
   artifacts:
     paths:
       - gl-code-quality-report.json
