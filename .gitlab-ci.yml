@@ -121,7 +121,7 @@ deploy-dev:
         DEV_PATH: "/opt/tomcat/webapps"
   script:
     - echo "Deployment for Dev Environment"
-    - cp CI_PROJECT_DIR/target/*.war $DEV_PATH
+    - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
   environment:
     name: $ENV
   needs:
@@ -139,7 +139,7 @@ deploy-stage:
         STAGE_PATH: "/mnt/volume/stage-env/webapps"
   script:
     - echo "Deployment for Dev Environment"
-    - cp CI_PROJECT_DIR/target/*.war $STAGE_PATH
+    - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
   environment:
     name: $ENV
   needs:
@@ -157,7 +157,7 @@ deploy-production:
         PROD_PATH: "/mnt/volume/stage-env/webapps"
   script:
     - echo "Deployment for Dev Environment"
-    - cp CI_PROJECT_DIR/target/*.war $PROD_PATH
+    - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
   environment:
     name: $ENV
   needs:
