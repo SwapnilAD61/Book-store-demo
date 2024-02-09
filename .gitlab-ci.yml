@@ -77,25 +77,28 @@ build-code:
     paths:
       - target/*.war
 
+## Package Artifact
 package-artifact:
   stage: package
   tags:
     - shell-ci-auto
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/my_package/0.0.1/*.war"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/my_package/0.0.1/onlinebookstore.war"'
   needs: [build-code]
 
-
+## Release Using Git Tag
 webapp-release:
   stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   tags:
-    - shell-ci-auto
+    - docker-ci-auto
   script:
     - echo "Webapp release job"
   release:
     tag_name: 'v${CI_COMMIT_TAG}'
     description: 'Android release v${CI_COMMIT_TAG}'
 
+## Deployment on dev
 deploy-dev:
   stage: deploy
   tags:
@@ -113,6 +116,7 @@ deploy-dev:
     - build-code
   when: manual
 
+## Deployment on stage
 deploy-stage:
   stage: deploy
   tags:
@@ -130,7 +134,7 @@ deploy-stage:
     - build-code
   when: manual
 
-
+## Deployment on prod
 deploy-production:
   stage: deploy
   tags:
