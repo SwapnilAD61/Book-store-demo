@@ -12,7 +12,7 @@ include:
 
 
 ## Testing Stage ##
-.code_quality:
+code_quality:
   stage: test
   tags:
     - docker-ci-auto-cq
@@ -23,7 +23,7 @@ include:
       codequality: gl-code-quality-report.json
   when: always
 
-.emnasium-maven-dependency_scanning:
+emnasium-maven-dependency_scanning:
   extends:
     - .ds-analyzer
     - .cyclonedx-reports
@@ -38,7 +38,7 @@ include:
      - gl-dependency-scanning-report.json
     expire_in: never
  
-.sast:
+sast:
   stage: test
   tags:
     - docker-ci-auto
@@ -62,9 +62,8 @@ include:
 security-scans:
   extends:
     - .secret_detection
-    - .sast
-    - .emnasium-maven-dependency_scanning
-    - .code_quality
+
+
 
 ## Build Stage ##
 build-code:
