@@ -87,6 +87,7 @@ package-artifact:
 
 
 webapp-release:
+  stage: release
   tags:
     - shell-ci-auto
   script:
