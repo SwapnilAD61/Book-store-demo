@@ -27,19 +27,33 @@ code_quality:
   when: always
 
 
-gemnasium-dependency_scanning:
+# gemnasium-dependency_scanning:
+#   stage: test
+#   tags:
+#     - docker-ci-auto
+#   variables:
+#     CI_DEBUG_TRACE: "true"
+#   artifacts:
+#     paths:
+#     # - gl-sbom-*.cdx.json
+#     - gl-dependency-scanning-report.json
+#     expire_in: 1 week
+gemnasium-maven-dependency_scanning:
+  extends:
+    - .ds-analyzer
+    - .cyclonedx-reports
+  variables:
+    DS_ANALYZER_NAME: "gemnasium-maven"
   stage: test
   tags:
     - docker-ci-auto
-  variables:
-    CI_DEBUG_TRACE: "true"
   artifacts:
     paths:
-    # - gl-sbom-*.cdx.json
-    - gl-dependency-scanning-report.json
-    expire_in: 1 week
+     - gl-sbom-*.cdx.json
+     - gl-dependency-scanning-report.json
+    expire_in: never
 
- 
+
 sast:
   stage: test
   tags:
