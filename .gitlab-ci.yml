@@ -74,7 +74,6 @@ secret_detection:
   artifacts:
     paths:
       - gl-secret_detection-report.json
-  allow_failure: true
 
 
 
@@ -91,10 +90,6 @@ build-code:
   artifacts:
     paths:
       - target/*.war
-  when: on_failure
-  needs:
-    - job: secret_detection
-  allow_failure: false
 
 
 ## Package Artifact
