@@ -29,7 +29,7 @@ code_quality:
 
 gemnasium-dependency_scanning:
   tags:
-  - docker-ci-auto
+    - docker-ci-auto
   stage: test
   variables:
     CI_DEBUG_TRACE: "true"
