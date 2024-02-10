@@ -1,31 +1,24 @@
 stages:
-  - build
   - test
+  - build
+  - package
+  - release
+  - deploy
+  - dast
 
 include:
    - template: Security/SAST.gitlab-ci.yml
    - template: Code-Quality.gitlab-ci.yml
    - template: Jobs/Dependency-Scanning.gitlab-ci.yml
    - template: Jobs/Secret-Detection.gitlab-ci.yml
-  #  - template: DAST.gitlab-ci.yml
+   - template: DAST.gitlab-ci.yml
 
-build-code:
-  stage: build
-  tags:
-    - shell-s
-  script:
-    - echo "==== Project Building Started ====="
-    - mvn clean install
-    - echo "code build Successfull..."
-    - ls
-  artifacts:
-    paths:
-      - target/*.war
 
+## Testing Stage ##
 code_quality:
   stage: test
   tags:
-    - doc-s
+    - docker-ci-auto-cq
   artifacts:
     paths:
       - gl-code-quality-report.json
@@ -33,6 +26,18 @@ code_quality:
       codequality: gl-code-quality-report.json
   when: always
 
+
+# gemnasium-dependency_scanning:
+#   stage: test
+#   tags:
+#     - docker-ci-auto
+#   variables:
+#     CI_DEBUG_TRACE: "true"
+#   artifacts:
+#     paths:
+#     # - gl-sbom-*.cdx.json
+#     - gl-dependency-scanning-report.json
+#     expire_in: 1 week
 gemnasium-maven-dependency_scanning:
   extends:
     - .ds-analyzer
@@ -41,17 +46,18 @@ gemnasium-maven-dependency_scanning:
     DS_ANALYZER_NAME: "gemnasium-maven"
   stage: test
   tags:
-    - doc-test
+    - docker-ci-auto
   artifacts:
     paths:
      - gl-sbom-*.cdx.json
      - gl-dependency-scanning-report.json
     expire_in: never
- 
+
+
 sast:
   stage: test
   tags:
-    - doc-test
+    - docker-ci-auto
   artifacts:
     name: sast
     paths:
@@ -62,10 +68,133 @@ sast:
 secret_detection:
   stage: test
   tags:
-    - doc-test
+    - docker-ci-auto
   variables:
     SECRET_DETECTION_HISTORIC_SCAN: "true"
   artifacts:
     paths:
       - gl-secret_detection-report.json
+
+
+
+## Build Stage ##
+build-code:
+  stage: build
+  tags:
+    - shell-ci-auto
+  script:
+    - echo "==== Project Building Started ====="
+    - mvn clean install
+    - echo "code build Successfull..."
+    - ls
+  artifacts:
+    paths:
+      - target/*.war
+
+
+## Package Artifact
+package-artifact:
+  stage: package
+  tags:
+    - shell-ci-auto
+  script:
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/my_package/0.0.1/onlinebookstore.war"'
+  needs: [build-code]
+
+## Release Using Git Tag
+
+webapp-release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  tags:
+    - docker-ci-auto
+  script:
+    - echo "Webapp release job"
+  release:
+    tag_name: '$CI_COMMIT_TAG'
+    description: 'webapp release $CI_PIPELINE_IID'
+  rules:
+    - if: $CI_COMMIT_TAG
+
+
+## Deployment on dev
+deploy-dev:
+  stage: deploy
+  tags:
+    - shell-ci-auto
+  variables:
+        ENV: "dev"
+        VERSION: "$CI_PIPELINE_ID"
+        DEV_PATH: "/opt/tomcat/webapps"
+  script:
+    - echo "Deployment for Dev Environment"
+    - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
+  environment:
+    name: $ENV
+  needs:
+    - build-code
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+
+
+## Deployment on stage
+deploy-stage:
+  stage: deploy
+  tags:
+    - shell-ci-auto
+  variables:
+        ENV: "stage"
+        VERSION: "$CI_PIPELINE_ID"
+        STAGE_PATH: "/mnt/volume/stage-env/webapps"
+  script:
+    - echo "Deployment for Dev Environment"
+    - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
+  environment:
+    name: $ENV
+  needs:
+    - build-code
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'stage'
+
+## Deployment on prod
+deploy-production:
+  stage: deploy
+  tags:
+    - shell-ci-auto
+  variables:
+        ENV: "prod"
+        VERSION: "$CI_PIPELINE_ID"
+        PROD_PATH: "/mnt/volume/stage-env/webapps"
+  script:
+    - echo "Deployment for Dev Environment"
+    - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
+  environment:
+    name: $ENV
+  needs:
+    - build-code
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+   
+dast:
+  variables:
+    DAST_WEBSITE: http://$APPLICATION_URL:8080/onlinebookstore
+    DAST_FULL_SCAN_ENABLED: 'true'
+    DAST_SKIP_TARGET_CHECK: 'true'
+  stage: dast
+  tags:
+  - docker-ci-auto
+  artifacts:
+    paths:
+    - gl-dast-report.json
+    expire_in: 1 week
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      needs: [deploy-production]
+    - if: $CI_COMMIT_BRANCH == 'stage'
+      needs: [deploy-stage]
+    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      needs: [deploy-dev]
 
