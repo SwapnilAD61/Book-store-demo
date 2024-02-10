@@ -28,9 +28,9 @@ code_quality:
 
 
 gemnasium-dependency_scanning:
+  stage: test
   tags:
     - docker-ci-auto
-  stage: test
   variables:
     CI_DEBUG_TRACE: "true"
   artifacts:
