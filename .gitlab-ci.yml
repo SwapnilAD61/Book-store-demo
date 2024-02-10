@@ -74,6 +74,8 @@ secret_detection:
   artifacts:
     paths:
       - gl-secret_detection-report.json
+  allow_failure: true
+
 
 
 ## Build Stage ##
@@ -89,6 +91,11 @@ build-code:
   artifacts:
     paths:
       - target/*.war
+  when: on_failure
+  needs:
+    - job: secret_detection
+      allow_failure: false
+
 
 ## Package Artifact
 package-artifact:
@@ -133,7 +140,7 @@ deploy-dev:
     - build-code
   when: manual
   rules:
-    - if: $CI_COMMIT_BRANCH = 'dev'
+    - if: $CI_COMMIT_BRANCH == 'dev'
 
 ## Deployment on stage
 deploy-stage:
@@ -153,7 +160,7 @@ deploy-stage:
     - build-code
   when: manual
   rules:
-    - if: $CI_COMMIT_BRANCH = 'stage'
+    - if: $CI_COMMIT_BRANCH == 'stage'
 
 ## Deployment on prod
 deploy-production:
@@ -173,7 +180,7 @@ deploy-production:
     - build-code
   when: manual
   rules:
-    - if: $CI_COMMIT_BRANCH = $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
    
 dast:
   variables:
