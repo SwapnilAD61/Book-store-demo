@@ -140,7 +140,8 @@ deploy-dev:
     - build-code
   when: manual
   rules:
-    - if: $CI_COMMIT_BRANCH == 'dev'
+    - if: $CI_COMMIT_BRANCH != 'stage' || $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+
 
 ## Deployment on stage
 deploy-stage:
@@ -194,5 +195,11 @@ dast:
     paths:
     - gl-dast-report.json
     expire_in: 1 week
-  needs: [deploy-production, deploy-stage, deploy-dev]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      needs: [deploy-production]
+    - if: $CI_COMMIT_BRANCH == 'stage'
+      needs: [deploy-stage]
+    - if: $CI_COMMIT_BRANCH != 'stage' || $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      needs: [deploy-dev]
 
