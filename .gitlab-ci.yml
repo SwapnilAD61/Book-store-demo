@@ -114,6 +114,7 @@ webapp-release:
   rules:
     - if: $CI_COMMIT_TAG
 
+
 ## Deployment on dev
 deploy-dev:
   stage: deploy
@@ -131,6 +132,8 @@ deploy-dev:
   needs:
     - build-code
   when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH = 'dev'
 
 ## Deployment on stage
 deploy-stage:
@@ -149,6 +152,8 @@ deploy-stage:
   needs:
     - build-code
   when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH = 'stage'
 
 ## Deployment on prod
 deploy-production:
@@ -167,6 +172,8 @@ deploy-production:
   needs:
     - build-code
   when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH = $CI_DEFAULT_BRANCH
    
 dast:
   variables:
@@ -180,4 +187,5 @@ dast:
     paths:
     - gl-dast-report.json
     expire_in: 1 week
+  needs: [deploy-production, deploy-stage, deploy-dev]
 
