@@ -140,7 +140,7 @@ deploy-dev:
     - build-code
   when: manual
   rules:
-    - if: $CI_COMMIT_BRANCH != 'stage' || $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
 
 
 ## Deployment on stage
@@ -200,6 +200,6 @@ dast:
       needs: [deploy-production]
     - if: $CI_COMMIT_BRANCH == 'stage'
       needs: [deploy-stage]
-    - if: $CI_COMMIT_BRANCH != 'stage' || $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       needs: [deploy-dev]
 
