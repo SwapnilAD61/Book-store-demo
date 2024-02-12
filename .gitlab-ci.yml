@@ -19,6 +19,8 @@ build-code:
   artifacts:
     paths:
       - target/*.war
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
 
 
 deploy:
