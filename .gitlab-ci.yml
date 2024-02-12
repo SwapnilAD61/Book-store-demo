@@ -121,6 +121,7 @@ deploy:
   stage: deploy
   trigger:
     include: deploy.yml
+    artifacts: true
 
 
 
