@@ -2,8 +2,8 @@ stages:
   - build
   - deploy
 
-variables:
-  VERSION: ""
+# variables:
+#   VERSION: ""
 
 
 ## Build Stage ##
