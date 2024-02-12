@@ -6,7 +6,6 @@ stages:
   - deploy
   # - dast
 
-
 include:
    - template: Security/SAST.gitlab-ci.yml
    - template: Code-Quality.gitlab-ci.yml
@@ -49,18 +48,18 @@ gemnasium-maven-dependency_scanning:
     - if: $CI_PIPELINE_SOURCE == "push"
 
 
-sast:
-  stage: test
-  tags:
-    - docker-ci-auto
-  artifacts:
-    name: sast
-    paths:
-      - gl-sast-report.json
-    reports:
-      sast: gl-sast-report.json
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
+# sast:
+#   stage: test
+#   tags:
+#     - docker-ci-auto
+#   artifacts:
+#     name: sast
+#     paths:
+#       - gl-sast-report.json
+#     reports:
+#       sast: gl-sast-report.json
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "push"
  
 secret_detection:
   stage: test
