@@ -2,8 +2,8 @@ stages:
   - build
   - deploy
 
-# variables:
-#   VERSION: ""
+variables:
+  VERSION: ""
 
 
 ## Build Stage ##
@@ -12,7 +12,7 @@ build-code:
   tags:
     - shell-ci-auto
   script:
-    - echo "==== Project Building Started ====="
+    - echo "==== Project Building Started $VERSION====="
     - mvn clean install
     - echo "code build Successfull..."
     - ls
