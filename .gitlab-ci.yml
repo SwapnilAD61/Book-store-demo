@@ -6,6 +6,7 @@ stages:
   - deploy
   # - dast
 
+
 include:
    - template: Security/SAST.gitlab-ci.yml
    - template: Code-Quality.gitlab-ci.yml
@@ -14,8 +15,7 @@ include:
 
 variables:
   VERSION: ""
-
-  #  - template: DAST.gitlab-ci.yml
+#  - template: DAST.gitlab-ci.yml
 ## Testing Stage ##
 code_quality:
   stage: test
