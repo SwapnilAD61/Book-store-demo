@@ -14,7 +14,6 @@ include:
 
 variables:
   VERSION: ""
-#  - template: DAST.gitlab-ci.yml
 ## Testing Stage ##
 code_quality:
   stage: test
