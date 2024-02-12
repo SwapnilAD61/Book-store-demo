@@ -7,7 +7,6 @@ deploy-dev:
     - shell-ci-auto
   variables:
         ENV: "dev"
-        VERSION: "$CI_PIPELINE_ID"
         DEV_PATH: "/opt/tomcat/webapps"
   script:
     - echo "Deployment for Dev Environment with $VERSION"
