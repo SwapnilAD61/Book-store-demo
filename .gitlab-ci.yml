@@ -117,84 +117,93 @@ webapp-release:
     - if: $CI_COMMIT_TAG
 
 
+Deploy to Dev-Client:
+  stage: deploy
+  tags:
+    - shell-ci-auto
+  trigger:
+      include: deploy/deploy.yml
+      branch: "main"
+
+
 ## Deployment on dev
-deploy-dev:
-  stage: deploy
-  tags:
-    - shell-ci-auto
-  variables:
-        ENV: "dev"
-        VERSION: "$CI_PIPELINE_ID"
-        DEV_PATH: "/opt/tomcat/webapps"
-  script:
-    - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
-  environment:
-    name: $ENV
-  needs:
-    - build-code
-  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+# deploy-dev:
+#   stage: deploy
+#   tags:
+#     - shell-ci-auto
+#   variables:
+#         ENV: "dev"
+#         VERSION: "$CI_PIPELINE_ID"
+#         DEV_PATH: "/opt/tomcat/webapps"
+#   script:
+#     - echo "Deployment for Dev Environment"
+#     - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
+#   environment:
+#     name: $ENV
+#   needs:
+#     - build-code
+#   when: manual
+#   rules:
+#     - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
 
 
-## Deployment on stage
-deploy-stage:
-  stage: deploy
-  tags:
-    - shell-ci-auto
-  variables:
-        ENV: "stage"
-        VERSION: "$CI_PIPELINE_ID"
-        STAGE_PATH: "/mnt/volume/stage-env/webapps"
-  script:
-    - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
-  environment:
-    name: $ENV
-  needs:
-    - build-code
-  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'stage'
+# ## Deployment on stage
+# deploy-stage:
+#   stage: deploy
+#   tags:
+#     - shell-ci-auto
+#   variables:
+#         ENV: "stage"
+#         VERSION: "$CI_PIPELINE_ID"
+#         STAGE_PATH: "/mnt/volume/stage-env/webapps"
+#   script:
+#     - echo "Deployment for Dev Environment"
+#     - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
+#   environment:
+#     name: $ENV
+#   needs:
+#     - build-code
+#   when: manual
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == 'stage'
 
-## Deployment on prod
-deploy-production:
-  stage: deploy
-  tags:
-    - shell-ci-auto
-  variables:
-        ENV: "prod"
-        VERSION: "$CI_PIPELINE_ID"
-        PROD_PATH: "/mnt/volume/stage-env/webapps"
-  script:
-    - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
-  environment:
-    name: $ENV
-  needs:
-    - build-code
-  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+# ## Deployment on prod
+# deploy-production:
+#   stage: deploy
+#   tags:
+#     - shell-ci-auto
+#   variables:
+#         ENV: "prod"
+#         VERSION: "$CI_PIPELINE_ID"
+#         PROD_PATH: "/mnt/volume/stage-env/webapps"
+#   script:
+#     - echo "Deployment for Dev Environment"
+#     - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
+#   environment:
+#     name: $ENV
+#   needs:
+#     - build-code
+#   when: manual
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
    
-dast:
-  variables:
-    DAST_WEBSITE: http://$APPLICATION_URL:8080/onlinebookstore
-    DAST_FULL_SCAN_ENABLED: 'true'
-    DAST_SKIP_TARGET_CHECK: 'true'
-  stage: dast
-  tags:
-  - docker-ci-auto
-  artifacts:
-    paths:
-    - gl-dast-report.json
-    expire_in: 1 week
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      needs: [deploy-production]
-    - if: $CI_COMMIT_BRANCH == 'stage'
-      needs: [deploy-stage]
-    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-      needs: [deploy-dev]
+# dast:
+#   variables:
+#     DAST_WEBSITE: http://$APPLICATION_URL:8080/onlinebookstore
+#     DAST_FULL_SCAN_ENABLED: 'true'
+#     DAST_SKIP_TARGET_CHECK: 'true'
+#   stage: dast
+#   tags:
+#   - docker-ci-auto
+#   artifacts:
+#     paths:
+#     - gl-dast-report.json
+#     expire_in: 1 week
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#       needs: [deploy-production]
+#     - if: $CI_COMMIT_BRANCH == 'stage'
+#       needs: [deploy-stage]
+#     - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+#       needs: [deploy-dev]
 
