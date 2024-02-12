@@ -102,7 +102,7 @@ package-artifact:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
 
-## Release Using Git Tag
+## Release Using Gittags
 
 webapp-release:
   stage: release
