@@ -118,6 +118,7 @@ webapp-release:
 
 
 deploy:
+  stage: deploy
   trigger:
     include: deploy/deploy.yml
 
