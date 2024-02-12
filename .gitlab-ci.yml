@@ -4,7 +4,7 @@ stages:
   - package
   - release
   - deploy
-  - dast
+  # - dast
 
 include:
    - template: Security/SAST.gitlab-ci.yml
