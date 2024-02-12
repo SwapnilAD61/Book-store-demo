@@ -118,9 +118,6 @@ webapp-release:
 
 
 deploy:
-  stage: deploy
-  tags:
-    - shell-ci-auto
   trigger:
     include: deploy/deploy.yml
 

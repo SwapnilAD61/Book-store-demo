@@ -1,5 +1,6 @@
 stages:
   - deploy
+  - dast
 
 deploy-dev:
   stage: deploy
