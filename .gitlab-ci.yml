@@ -23,6 +23,8 @@ build-code:
 
 deploy:
   stage: deploy
+  variables:
+    VERSION: "$VERSION"
   trigger:
     include:
       - local: deploy.yml
