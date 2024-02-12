@@ -120,7 +120,7 @@ webapp-release:
 deploy:
   stage: deploy
   trigger:
-    include: deploy/.gitlab-ci.yml
+    include: deploy.yml
 
 
 
