@@ -14,8 +14,8 @@ deploy-dev:
     - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
   environment:
     name: $ENV
-  needs:
-    - build-code
+  # needs:
+  #   - build-code
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
@@ -35,8 +35,8 @@ deploy-stage:
     - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
   environment:
     name: $ENV
-  needs:
-    - build-code
+  # needs:
+  #   - build-code
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == 'stage'
@@ -55,8 +55,8 @@ deploy-production:
     - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
   environment:
     name: $ENV
-  needs:
-    - build-code
+  # needs:
+  #   - build-code
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

@@ -121,6 +121,8 @@ deploy:
   stage: deploy
   trigger:
     include: deploy/deploy.yml
+  when: manual
+
 
 
 ## Deployment on dev
