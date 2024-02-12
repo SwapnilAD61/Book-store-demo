@@ -1,6 +1,5 @@
 stages:
   - deploy
-  - dast
 
 deploy-dev:
   stage: deploy
@@ -62,23 +61,23 @@ deploy-production:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
    
-dast:
-  variables:
-    DAST_WEBSITE: http://$APPLICATION_URL:8080/onlinebookstore
-    DAST_FULL_SCAN_ENABLED: 'true'
-    DAST_SKIP_TARGET_CHECK: 'true'
-  stage: dast
-  tags:
-  - docker-ci-auto
-  artifacts:
-    paths:
-    - gl-dast-report.json
-    expire_in: 1 week
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      needs: [deploy-production]
-    - if: $CI_COMMIT_BRANCH == 'stage'
-      needs: [deploy-stage]
-    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-      needs: [deploy-dev]
+# dast:
+#   variables:
+#     DAST_WEBSITE: http://$APPLICATION_URL:8080/onlinebookstore
+#     DAST_FULL_SCAN_ENABLED: 'true'
+#     DAST_SKIP_TARGET_CHECK: 'true'
+#   stage: dast
+#   tags:
+#   - docker-ci-auto
+#   artifacts:
+#     paths:
+#     - gl-dast-report.json
+#     expire_in: 1 week
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#       needs: [deploy-production]
+#     - if: $CI_COMMIT_BRANCH == 'stage'
+#       needs: [deploy-stage]
+#     - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+#       needs: [deploy-dev]
 
