@@ -55,7 +55,7 @@ gemnasium-maven-dependency_scanning:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
 
-sast:
+semgrep-sast:
   stage: test
   tags:
     - docker-ci-auto
