@@ -24,7 +24,8 @@ code_quality:
     reports:
       codequality: gl-code-quality-report.json
   when: always
-
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
 
 # gemnasium-dependency_scanning:
 #   stage: test
@@ -51,7 +52,8 @@ gemnasium-maven-dependency_scanning:
      - gl-sbom-*.cdx.json
      - gl-dependency-scanning-report.json
     expire_in: never
-
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
 
 sast:
   stage: test
@@ -63,7 +65,9 @@ sast:
       - gl-sast-report.json
     reports:
       sast: gl-sast-report.json
- 
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+
 secret_detection:
   stage: test
   tags:
@@ -73,7 +77,8 @@ secret_detection:
   artifacts:
     paths:
       - gl-secret_detection-report.json
-
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
 
 
 ## Build Stage ##
@@ -89,6 +94,8 @@ build-code:
   artifacts:
     paths:
       - target/*.war
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
 
 
 ## Package Artifact
@@ -99,7 +106,8 @@ package-artifact:
   script:
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/my_package/0.0.1/onlinebookstore.war"'
   needs: [build-code]
-
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
 ## Release Using Git Tag
 
 webapp-release:
@@ -114,7 +122,7 @@ webapp-release:
     description: 'webapp release $CI_PIPELINE_IID'
   rules:
     - if: $CI_COMMIT_TAG
-
+    - if: $CI_PIPELINE_SOURCE == "push"
 
 deploy:
   stage: deploy
