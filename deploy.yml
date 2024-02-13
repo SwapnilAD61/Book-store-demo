@@ -12,8 +12,12 @@ deploy-dev:
         DEV_PATH: "/opt/tomcat/webapps"
   script:
     - echo "Deployment for Dev Environment with $VERSION"
+    - mkdir target
+    - cd target
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${VERSION}/onlinebookstore.war"'
+    - cd ..
     - cp target/*.war $DEV_PATH
+    - rm -r target
   environment:
     name: $ENV
   # needs:
@@ -69,8 +73,13 @@ deploy-production:
         VERSION: "$CI_PIPELINE_ID"
         PROD_PATH: "/mnt/volume/stage-env/webapps"
   script:
-    - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
+    - echo "Deployment for Prod Environment with $VERSION"
+    - mkdir target
+    - cd target
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${VERSION}/onlinebookstore.war"'
+    - cd ..
+    - cp target/*.war $PROD_PATH
+    - rm -r target
   environment:
     name: $ENV
   # needs:
