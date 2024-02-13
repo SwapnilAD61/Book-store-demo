@@ -60,7 +60,7 @@ webapp-release:
     tag_name: '$CI_COMMIT_TAG'
     description: 'webapp release $CI_PIPELINE_IID'
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TAG
     
 
 ## Deployment on prod
