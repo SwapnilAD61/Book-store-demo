@@ -106,7 +106,7 @@ package-artifact:
   tags:
     - shell-ci-auto
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/my_package/0.0.1/onlinebookstore.war"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${CI_PIPELINE_IID}/onlinebookstore.war"'
   needs: [build-code]
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
