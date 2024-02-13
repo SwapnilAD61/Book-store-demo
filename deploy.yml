@@ -12,7 +12,7 @@ deploy-dev:
         DEV_PATH: "/opt/tomcat/webapps"
   script:
     - echo "Deployment for Dev Environment with $VERSION"
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${CI_PIPELINE_IID}/onlinebookstore.war"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${VERSION}/onlinebookstore.war"'
     - cp target/*.war $DEV_PATH
   environment:
     name: $ENV
