@@ -1,5 +1,7 @@
 stages:
   - deploy
+  - release
+
 
 deploy-dev:
   stage: deploy
@@ -10,6 +12,7 @@ deploy-dev:
         DEV_PATH: "/opt/tomcat/webapps"
   script:
     - echo "Deployment for Dev Environment with $VERSION"
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${CI_PIPELINE_IID}/onlinebookstore.war"'
     - cp target/*.war $DEV_PATH
   environment:
     name: $ENV
@@ -39,6 +42,22 @@ deploy-stage:
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == 'stage'
+
+
+
+webapp-release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  tags:
+    - docker-ci-auto
+  script:
+    - echo "Webapp release job"
+  release:
+    tag_name: '$CI_COMMIT_TAG'
+    description: 'webapp release $CI_PIPELINE_IID'
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    
 
 ## Deployment on prod
 deploy-production:
