@@ -11,6 +11,9 @@ include:
    - template: Jobs/Dependency-Scanning.gitlab-ci.yml
    - template: Jobs/Secret-Detection.gitlab-ci.yml
 
+variables:
+  VERSION: ""
+  deploy: ""
 
 
 ## Testing Stage ##
@@ -128,11 +131,12 @@ deploy:
   stage: deploy
   variables:
     VERSION: "$VERSION"
+    deploy: "$deploy"
   trigger:
     include:
       - local: deploy.yml
   only:
     variables:
-        - $deploy=="dev"  
+        - $deploy=="dev" || $deploy=="prod"
 
 
