@@ -15,7 +15,7 @@ variables:
   deploy: ""
 
 
-## Testing Stage #
+## Testing Stage ##
 code_quality:
   stage: test
   tags:
