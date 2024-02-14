@@ -65,6 +65,7 @@ webapp-release:
     description: 'webapp release $CI_PIPELINE_IID'
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $VERSION
+      needs: [deploy-production]
     
 
 ## Deployment on prod
@@ -91,6 +92,7 @@ deploy-production:
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
    
 dast:
   variables:
