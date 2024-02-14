@@ -152,7 +152,7 @@ public class BookServiceImpl implements BookService {
                     + " WHERE " +
                     BooksDBConstants.COLUMN_BARCODE + " IN ( " + commaSeperatedBookIds + " )";
             PreparedStatement ps = con.prepareStatement(getBooksByCommaSeperatedBookIdsQuery);
-            ResultSet rs = ps.executeQuery();
+            ps.setString(1, bookIds);            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 String bCode = rs.getString(1);
