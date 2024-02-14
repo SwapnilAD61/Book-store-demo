@@ -51,8 +51,8 @@ gemnasium-maven-dependency_scanning:
     - docker-ci-auto
   artifacts:
     paths:
-     - gl-sbom-*.cdx.json
-     - gl-dependency-scanning-report.json
+     - "**/gl-sbom-*.cdx.json"
+     - "gl-dependency-scanning-report.json"
     expire_in: never
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
@@ -77,8 +77,11 @@ secret_detection:
   variables:
     SECRET_DETECTION_HISTORIC_SCAN: "true"
   artifacts:
+    reports:
+      secret_detection: gl-secret-detection-report.json
     paths:
-      - gl-secret_detection-report.json
+      - "gl-secret-detection-report.json"
+
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
 
