@@ -114,5 +114,5 @@ dast:
     - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       needs: [deploy-dev]
     - if: $CI_COMMIT_TAG
-      needs: [deploy-dev]
+      needs: [deploy-production]
 
