@@ -28,7 +28,7 @@ deploy-dev:
   #   - build-code
   when: manual
   rules:
-    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH && !$CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH != 'stage' && $CI_COMMIT_BRANCH && $CI_DEFAULT_BRANCH != ""
 
 
 ## Deployment on stage
