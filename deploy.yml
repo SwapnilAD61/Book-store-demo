@@ -68,7 +68,7 @@ webapp-release:
       needs: [deploy-production]
     
 
-## Deployment on prod
+## Deployment on 
 deploy-production:
   stage: deploy
   tags:
