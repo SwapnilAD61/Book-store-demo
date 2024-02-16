@@ -22,7 +22,7 @@ code_quality:
     - docker-ci-auto-cq
   artifacts:
     paths:
-      - gl-code-quality-report.json
+    - gl-code-quality-report.json
     reports:
       codequality: gl-code-quality-report.json
   when: always
