@@ -127,8 +127,15 @@ deploy-dev:
         VERSION: "$CI_PIPELINE_ID"
         DEV_PATH: "/opt/tomcat/webapps"
   script:
-    - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
+    # - echo "Deployment for Dev Environment"
+    # - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
+    - mkdir stage
+    - cd stage
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${VERSION}/onlinebookstore.war"'
+    - cd ..
+    - cp stage/*.war $DEV_PATH
+    - rm -r stage
+
   environment:
     name: $ENV
   needs:
@@ -148,8 +155,16 @@ deploy-stage:
         VERSION: "$CI_PIPELINE_ID"
         STAGE_PATH: "/mnt/volume/stage-env/webapps"
   script:
+    # - echo "Deployment for Dev Environment"
+    # - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
     - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $STAGE_PATH
+    - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
+    - mkdir stage
+    - cd stage
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${VERSION}/onlinebookstore.war"'
+    - cd ..
+    - cp stage/*.war $DEV_PATH
+    - rm -r stage
   environment:
     name: $ENV
   needs:
@@ -168,8 +183,16 @@ deploy-production:
         VERSION: "$CI_PIPELINE_ID"
         PROD_PATH: "/mnt/volume/stage-env/webapps"
   script:
+    # - echo "Deployment for Dev Environment"
+    # - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
     - echo "Deployment for Dev Environment"
-    - cp $CI_PROJECT_DIR/target/*.war $PROD_PATH
+    - cp $CI_PROJECT_DIR/target/*.war $DEV_PATH
+    - mkdir stage
+    - cd stage
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" -O "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${VERSION}/onlinebookstore.war"'
+    - cd ..
+    - cp stage/*.war $DEV_PATH
+    - rm -r stage
   environment:
     name: $ENV
   needs:
