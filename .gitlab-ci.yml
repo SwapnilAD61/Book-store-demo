@@ -1,96 +1,12 @@
 stages:
-  - test
   - build
-  - package
-  - deploy
-
-include:
-   - template: Security/SAST.gitlab-ci.yml
-   - template: Code-Quality.gitlab-ci.yml
-   - template: Jobs/Dependency-Scanning.gitlab-ci.yml
-   - template: Jobs/Secret-Detection.gitlab-ci.yml
-
-variables:
-  VERSION: ""
-  deploy: ""
-
-
-## Testing Stage ##
-code_quality:
-  stage: test
-  tags:
-    - docker-ci-auto-cq
-  artifacts:
-    paths:
-    - gl-code-quality-report.json
-    reports:
-      codequality: gl-code-quality-report.json
-  when: always
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
-
-# gemnasium-dependency_scanning:
-#   stage: test
-#   tags:
-#     - docker-ci-auto
-#   variables:
-#     CI_DEBUG_TRACE: "true"
-#   artifacts:
-#     paths:
-#     # - gl-sbom-*.cdx.json
-#     - gl-dependency-scanning-report.json
-#     expire_in: 1 week
-gemnasium-maven-dependency_scanning:
-  extends:
-    - .ds-analyzer
-    - .cyclonedx-reports
-  variables:
-    DS_ANALYZER_NAME: "gemnasium-maven"
-  stage: test
-  tags:
-    - docker-ci-auto
-  artifacts:
-    paths:
-     - "**/gl-sbom-*.cdx.json"
-     - "gl-dependency-scanning-report.json"
-    expire_in: never
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
-
-semgrep-sast:
-  stage: test
-  tags:
-    - docker-ci-auto
-  artifacts:
-    name: sast
-    paths:
-      - gl-sast-report.json
-    reports:
-      sast: gl-sast-report.json
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
-
-secret_detection:
-  stage: test
-  tags:
-    - docker-ci-auto
-  variables:
-    SECRET_DETECTION_HISTORIC_SCAN: "true"
-  artifacts:
-    reports:
-      secret_detection: gl-secret-detection-report.json
-    paths:
-      - "gl-secret-detection-report.json"
-
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
-
+  - test 
 
 ## Build Stage ##
 build-code:
   stage: build
   tags:
-    - shell-ci-auto
+    - sh_snyk
   script:
     - echo "==== Project Building Started ====="
     - mvn clean install
@@ -99,32 +15,30 @@ build-code:
   artifacts:
     paths:
       - target/*.war
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
+  
 
 
-## Package Artifact
-package-artifact:
-  stage: package
-  tags:
-    - shell-ci-auto
+## SNYK Scanning
+
+dependency_scanning:
+  image: node:latest
+  stage: test
   script:
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${CI_PROJECT_DIR}/target/*.war "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_REF_NAME}/${CI_PIPELINE_IID}/onlinebookstore.war"'
-  needs: [build-code]
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
-## Release Using Git Tag
+    # Install npm, snyk, and snyk-to-html
+    - npm install -g npm@latest
+    - npm install -g snyk
+    - npm install snyk-to-html -g
+    # Run snyk help, snyk auth, snyk monitor, snyk test to break build and out report
+    - snyk --help
+    - snyk auth $SNYK_AUTH
+    - snyk monitor --project-name=Gitlab-snyk
+    - snyk test --json | snyk-to-html -o snyk_results.html
+ 
+  # Save report to artifacts
+  artifacts:
+    when: always
+    paths: 
+      - snyk_results.html
 
-deploy:
-  stage: deploy
-  variables:
-    VERSION: "$VERSION"
-    deploy: "$deploy"
-  trigger:
-    include:
-      - local: deploy.yml
-  only:
-    variables:
-        - $deploy=="dev" || $deploy=="prod"
 
 
