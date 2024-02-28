@@ -23,6 +23,8 @@ build-code:
 dependency_scanning:
   image: node:latest
   stage: test
+  tags:
+    - doc-s
   script:
     # Install npm, snyk, and snyk-to-html
     - npm install -g npm@latest
