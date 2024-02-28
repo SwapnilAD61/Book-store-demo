@@ -31,14 +31,16 @@ dependency_scanning:
     # Run snyk help, snyk auth, snyk monitor, snyk test to break build and out report
     - snyk --help
     - snyk auth $SNYK_AUTH
-    - snyk monitor --project-name=Gitlab-snyk
+    - snyk monitor --project-name=Gitlab-snyk --org=f2c48f33-7c38-4219-8c96-6d81afd9f53a
+    - snyk code test --org=f2c48f33-7c38-4219-8c96-6d81afd9f53a
+    - snyk iac test --org=f2c48f33-7c38-4219-8c96-6d81afd9f53a
     - snyk test --json | snyk-to-html -o snyk_results.html
  
   # Save report to artifacts
-  artifacts:
-    when: always
-    paths: 
-      - snyk_results.html
+  # artifacts:
+  #   when: always
+  #   paths: 
+  #     - snyk_results.html
 
 
 
