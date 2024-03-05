@@ -29,7 +29,7 @@ dependency_scanning:
     # Install npm, snyk, and snyk-to-html
     - npm install -g npm@latest
     - npm install -g snyk
-    - npm install snyk-to-html -g
+    # - npm install snyk-to-html -g
     # Run snyk help, snyk auth, snyk monitor, snyk test to break build and out report
     - snyk --help
     - snyk auth $SNYK_AUTH
