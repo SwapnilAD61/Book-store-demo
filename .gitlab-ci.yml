@@ -24,7 +24,8 @@ dependency_scanning:
   image: node:latest
   stage: test
   tags:
-    - doc1
+    - doc_check
+
   script:
     # Install npm, snyk, and snyk-to-html
     - npm install -g npm@latest
